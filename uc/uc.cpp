@@ -37,7 +37,6 @@ void recvThread(int sd) {
 		socklen_t len = sizeof(addr);
 		memset(&addr, 0, sizeof(addr));
 		ssize_t res = recvfrom(sd, buf, BUFSIZE - 1, 0, (struct sockaddr*)&addr, &len);
-		cout << "recvfrom return " << res << endl; // gilgil temp
 		if (res == 0 || res == -1) {
 			fprintf(stderr, "recvfrom return %ld\n", res);
 			perror("recvfrom");
@@ -67,9 +66,8 @@ int main(int argc, char* argv[]) {
 	addr.sin_addr = param.ip;
 	memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
 
-	//thread t(recvThread, sd);
-	//t.detach();
-	bool isFirst = true;
+	thread t(recvThread, sd);
+	t.detach();
 	while (true) {
 		string s;
 		getline(cin, s);
@@ -78,11 +76,6 @@ int main(int argc, char* argv[]) {
 			fprintf(stderr, "sendto return %ld\n", res);
 			perror("sendto");
 			break;
-		}
-		if (isFirst) {
-			isFirst = false;
-			thread* t = new thread(recvThread, sd);
-			t->detach();
 		}
 	}
 	close(sd);

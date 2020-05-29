@@ -69,13 +69,20 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
+	int optval = 1;
+	int res = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	if (res == -1) {
+		perror("setsockopt");
+		return -1;
+	}
+
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(param.port);
 	addr.sin_addr.s_addr = INADDR_ANY;
 	memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
 
-	int res = bind(sd, (struct sockaddr*)&addr, sizeof(addr));
+	res = bind(sd, (struct sockaddr*)&addr, sizeof(addr));
 	if (res == -1) {
 		perror("bind");
 		return -1;

@@ -68,13 +68,19 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	// assign IP, PORT
+	int optval = 1;
+	int res = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	if (res == -1) {
+		perror("setsockopt");
+		return -1;
+	}
+
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(param.port);
 
-	int res = bind(sd, (struct sockaddr *)&addr, sizeof(addr));
+	res = bind(sd, (struct sockaddr *)&addr, sizeof(addr));
 	if (res == -1) {
 		perror("bind");
 		return -1;
