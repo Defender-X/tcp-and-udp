@@ -45,7 +45,7 @@ void recvThread(int sd) {
 		buf[res] = '\0';
 		cout << buf << endl;
 	}
-	exit(0);
+    close(sd);
 }
 
 int main(int argc, char* argv[]) {

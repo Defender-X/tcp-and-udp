@@ -44,7 +44,7 @@ void recvThread(int sd) {
 		cout << buf << endl;
 	}
 	cout << "disconnected\n";
-	exit(0);
+    close(sd);
 }
 
 int main(int argc, char* argv[]) {
