@@ -46,6 +46,7 @@ void recvThread(int sd) {
 		cout << buf << endl;
 	}
     close(sd);
+	exit(0);
 }
 
 int main(int argc, char* argv[]) {
