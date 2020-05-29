@@ -4,4 +4,4 @@ CONFIG -= app_bundle
 CONFIG -= qt
 LIBS += -pthread
 SOURCES += \
-        main.cpp
+    uc.cpp
