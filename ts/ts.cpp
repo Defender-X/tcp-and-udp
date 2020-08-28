@@ -8,8 +8,8 @@
 using namespace std;
 
 void usage() {
-	cout << "syntax: ts <port>\n";
-	cout << "sample: ts [-e] 1234\n";
+	cout << "syntax: ts [-e] <port>\n";
+	cout << "sample: ts 1234\n";
 }
 
 struct Param {
