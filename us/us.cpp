@@ -51,8 +51,10 @@ void recvThread(int sd) {
 		buf[res] = '\0';
 		if (param.autoNewline)
 			cout << buf << endl;
-		else
+		else {
 			cout << buf;
+			cout.flush();
+		}
 		if (param.echo) {
 			res = sendto(sd, buf, res, 0, (struct sockaddr*)&addr, sizeof(addr));
 			if (res == 0 || res == -1) {

@@ -52,8 +52,10 @@ void recvThread(int sd) {
 		buf[res] = '\0';
 		if (param.autoNewline)
 			cout << buf << endl;
-		else
+		else {
 			cout << buf;
+			cout.flush();
+		}
 	}
     close(sd);
 	exit(0);

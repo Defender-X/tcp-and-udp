@@ -49,8 +49,10 @@ void recvThread(int sd) {
 		buf[res] = '\0';
 		if (param.autoNewline)
 			cout << buf << endl;
-		else
+		else {
 			cout << buf;
+			cout.flush();
+		}
 		if (param.echo) {
 			res = send(sd, buf, res, 0);
 			if (res == 0 || res == -1) {
