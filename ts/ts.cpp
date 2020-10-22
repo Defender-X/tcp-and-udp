@@ -8,26 +8,30 @@
 using namespace std;
 
 void usage() {
-	cout << "syntax: ts [-e] <port>\n";
+	cout << "syntax: ts [-an][-e] <port>\n";
+	cout << "  -an: auto newline\n";
+	cout << "  -e : echo\n";
 	cout << "sample: ts 1234\n";
 }
 
 struct Param {
+	bool autoNewline{false};
 	bool echo{false};
 	uint16_t port{0};
 
 	bool parse(int argc, char* argv[]) {
-		if (argc < 2) return false;
-		bool portExist = false;
 		for (int i = 1; i < argc; i++) {
+			if (strcmp(argv[i], "-an") == 0) {
+				autoNewline = true;
+				continue;
+			}
 			if (strcmp(argv[i], "-e") == 0) {
 				echo = true;
 				continue;
 			}
-			port = stoi(argv[i]);
-			portExist = true;
+			port = stoi(argv[i++]);
 		}
-		return portExist;
+		return port != 0;
 	}
 } param;
 
@@ -43,7 +47,10 @@ void recvThread(int sd) {
 			break;
 		}
 		buf[res] = '\0';
-		cout << buf << endl;
+		if (param.autoNewline)
+			cout << buf << endl;
+		else
+			cout << buf;
 		if (param.echo) {
 			res = send(sd, buf, res, 0);
 			if (res == 0 || res == -1) {

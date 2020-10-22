@@ -8,24 +8,31 @@
 using namespace std;
 
 void usage() {
-	cout << "syntax: uc <ip> <port>\n";
+	cout << "syntax: uc [-an] <ip> <port>\n";
+	cout << "  -an: auto newline\n";
 	cout << "sample: uc 127.0.0.1 1234\n";
 }
 
 struct Param {
+	bool autoNewline{false};
 	struct in_addr ip{0};
 	uint16_t port{0};
 
 	bool parse(int argc, char* argv[]) {
-		if (argc != 3) return false;
-		int res = inet_pton(AF_INET, argv[1], &ip);
-		switch (res) {
-			case 1: break;
-			case 0: cerr << "not a valid network address\n"; return false;
-			case -1: perror("inet_pton"); return false;
+		for (int i = 1; i < argc; i++) {
+			if (strcmp(argv[i], "-an") == 0) {
+				autoNewline = true;
+				continue;
+			}
+			int res = inet_pton(AF_INET, argv[i++], &ip);
+			switch (res) {
+				case 1: break;
+				case 0: cerr << "not a valid network address\n"; return false;
+				case -1: perror("inet_pton"); return false;
+			}
+			port = stoi(argv[i++]);
 		}
-		port = stoi(argv[2]);
-		return true;
+		return (ip.s_addr != 0) && (port != 0);
 	}
 } param;
 
@@ -43,7 +50,10 @@ void recvThread(int sd) {
 			break;
 		}
 		buf[res] = '\0';
-		cout << buf << endl;
+		if (param.autoNewline)
+			cout << buf << endl;
+		else
+			cout << buf;
 	}
     close(sd);
 	exit(0);
