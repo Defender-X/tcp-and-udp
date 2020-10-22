@@ -38,7 +38,7 @@ void recvThread(int sd) {
 		memset(&addr, 0, sizeof(addr));
 		ssize_t res = recvfrom(sd, buf, BUFSIZE - 1, 0, (struct sockaddr*)&addr, &len);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "recvfrom return %ld\n", res);
+			cerr << "recvfrom return " << res << endl;
 			perror("recvfrom");
 			break;
 		}
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 		getline(cin, s);
 		ssize_t res = sendto(sd, s.c_str(), s.size(), 0, (struct sockaddr*)&addr, sizeof(addr));
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "sendto return %ld\n", res);
+			cerr << "sendto return " << res << endl;
 			perror("sendto");
 			break;
 		}

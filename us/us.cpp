@@ -40,7 +40,7 @@ void recvThread(int sd) {
 		memset(&addr, 0, sizeof(addr));
 		ssize_t res = recvfrom(sd, buf, BUFSIZE - 1, 0, (struct sockaddr*)&addr, &len);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "recvfrom return %ld\n", res);
+			cerr << "recvfrom return " << res << endl;
 			perror("recv");
 			break;
 		}
@@ -49,7 +49,7 @@ void recvThread(int sd) {
 		if (param.echo) {
 			res = sendto(sd, buf, res, 0, (struct sockaddr*)&addr, sizeof(addr));
 			if (res == 0 || res == -1) {
-				fprintf(stderr, "sendto return %ld\n", res);
+				cerr << "sendto return " << res << endl;
 				perror("sendto");
 				break;
 			}
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 	addr.sin_addr.s_addr = INADDR_ANY;
 	memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
 
-	res = bind(sd, (struct sockaddr*)&addr, sizeof(addr));
+	res = ::bind(sd, (struct sockaddr*)&addr, sizeof(addr));
 	if (res == -1) {
 		perror("bind");
 		return -1;

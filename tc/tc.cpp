@@ -36,7 +36,7 @@ void recvThread(int sd) {
 	while (true) {
 		ssize_t res = recv(sd, buf, BUFSIZE - 1, 0);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "recv return %ld\n", res);
+			cerr << "recv return " << res << endl;
 			perror("recv");
 			break;
 		}
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 		getline(cin, s);
 		ssize_t res = send(sd, s.c_str(), s.size(), 0);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "send return %ld\n", res);
+			cerr << "send return " << res << endl;
 			perror("send");
 			break;
 		}

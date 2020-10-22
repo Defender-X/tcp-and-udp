@@ -38,7 +38,7 @@ void recvThread(int sd) {
 	while (true) {
 		ssize_t res = recv(sd, buf, BUFSIZE - 1, 0);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "recv return %ld\n", res);
+			cerr << "recv return " << res << endl;
 			perror("recv");
 			break;
 		}
@@ -47,7 +47,7 @@ void recvThread(int sd) {
 		if (param.echo) {
 			res = send(sd, buf, res, 0);
 			if (res == 0 || res == -1) {
-				fprintf(stderr, "send return %ld\n", res);
+				cerr << "send return " << res << endl;
 				perror("send");
 				break;
 			}
@@ -81,8 +81,8 @@ int main(int argc, char* argv[]) {
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(param.port);
 
-	res = bind(sd, (struct sockaddr *)&addr, sizeof(addr));
-	if (res == -1) {
+	ssize_t res2 = ::bind(sd, (struct sockaddr *)&addr, sizeof(addr));
+	if (res2 == -1) {
 		perror("bind");
 		return -1;
 	}
