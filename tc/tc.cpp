@@ -9,7 +9,6 @@ using namespace std;
 
 void usage() {
 	cout << "syntax: tc <ip> <port>\n";
-	cout << "  -an: auto newline\n";
 	cout << "sample: tc 127.0.0.1 1234\n";
 }
 
