@@ -1,3 +1,5 @@
+Makefile
 *.o
 *.user
+*.qmake.stash
 /bin
