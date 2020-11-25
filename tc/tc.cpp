@@ -86,6 +86,7 @@ int main(int argc, char* argv[]) {
 
 	thread t(recvThread, sd);
 	t.detach();
+
 	while (true) {
 		string s;
 		getline(cin, s);
