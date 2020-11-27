@@ -36,8 +36,8 @@ void recvThread(int sd) {
 	while (true) {
 		ssize_t res = recv(sd, buf, BUFSIZE - 1, 0);
 		if (res == 0 || res == -1) {
-			cerr << "recv return " << res << endl;
-			perror("recv");
+			cerr << "recv return " << res;
+			perror(" ");
 			break;
 		}
 		buf[res] = '\0';
@@ -46,8 +46,8 @@ void recvThread(int sd) {
 		if (param.echo) {
 			res = send(sd, buf, res, 0);
 			if (res == 0 || res == -1) {
-				cerr << "send return " << res << endl;
-				perror("send");
+				cerr << "send return " << res;
+				perror(" ");
 				break;
 			}
 		}
