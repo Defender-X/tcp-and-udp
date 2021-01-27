@@ -31,10 +31,10 @@ uninstall:
 
 android-install:
 	su -c mount -o rw,remount /system
-	su -c cp tc /system/xbin
-	su -c cp ts /system/xbin
-	su -c cp uc /system/xbin
-	su -c cp us /system/xbin
+	su -c cp bin/tc /system/xbin
+	su -c cp bin/ts /system/xbin
+	su -c cp bin/uc /system/xbin
+	su -c cp bin/us /system/xbin
 	su -c mount -o ro,remount /system
 
 android-uninstall:
