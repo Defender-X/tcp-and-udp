@@ -30,12 +30,15 @@ uninstall:
 	sudo rm /usr/sbin/tc /usr/sbin/ts /usr/sbin/uc /usr/sbin/us
 
 android-install:
-	su -c mount -o rw,remount /system
-	su -c cp bin/tc /system/xbin
-	su -c cp bin/ts /system/xbin
-	su -c cp bin/uc /system/xbin
-	su -c cp bin/us /system/xbin
-	su -c mount -o ro,remount /system
+	adb push bin/tc bin/ts bin/uc bin/us /data/local/tmp
+	adb exec-out "su -c mount -o rw,remount /system"
+	adb exec-out "su -c cp /data/local/tmp/tc /data/local/tmp/ts /data/local/tmp/uc /data/local/tmp/us /system/xbin"
+	adb exec-out "su -c chmod 755 system/xbin/tc"
+	adb exec-out "su -c chmod 755 system/xbin/ts"
+	adb exec-out "su -c chmod 755 system/xbin/uc"
+	adb exec-out "su -c chmod 755 system/xbin/us"
+	adb exec-out "su -c mount -o ro,remount /system"
+	adb exec-out "su -c rm /data/local/tmp/tc /data/local/tmp/ts /data/local/tmp/uc /data/local/tmp/us"
 
 android-uninstall:
 	su -c mount -o rw,remount /system
