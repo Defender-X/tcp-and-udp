@@ -1,4 +1,5 @@
 TARGET=../bin/us
+CPPFLAGS+=-Wall
 LDLIBS+=-pthread
 
 all: $(TARGET)
