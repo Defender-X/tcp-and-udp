@@ -52,7 +52,7 @@ void recvThread(int sd) {
 		cout.flush();
 	}
 	cout << "disconnected\n";
-    close(sd);
+	close(sd);
 	exit(0);
 }
 

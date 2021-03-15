@@ -5,9 +5,9 @@
 #include <stdint.h>
 #include <winsock2.h>
 
-#define NS_INADDRSZ  4
+#define NS_INADDRSZ 4
 #define NS_IN6ADDRSZ 16
-#define NS_INT16SZ   2
+#define NS_INT16SZ 2
 
 int inet_pton4(const char *src, char *dst)
 {
