@@ -4,5 +4,4 @@ CONFIG -= app_bundle
 CONFIG -= qt
 LIBS += -pthread
 DESTDIR = $${PWD}/../bin
-SOURCES += \
-    us.cpp
+SOURCES += us.cpp

@@ -53,7 +53,7 @@ void recvThread(int sd) {
 		}
 	}
 	cout << "disconnected\n";
-    close(sd);
+	close(sd);
 }
 
 int main(int argc, char* argv[]) {

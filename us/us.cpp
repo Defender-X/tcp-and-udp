@@ -54,7 +54,7 @@ void recvThread(int sd) {
 			}
 		}
 	}
-    close(sd);
+	close(sd);
 }
 
 int main(int argc, char* argv[]) {

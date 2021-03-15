@@ -47,7 +47,7 @@ void recvThread(int sd) {
 		cout << buf;
 		cout.flush();
 	}
-    close(sd);
+	close(sd);
 	exit(0);
 }
 
