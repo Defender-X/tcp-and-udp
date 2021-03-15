@@ -1,7 +1,7 @@
 TARGET=../bin/uc
 CPPFLAGS+=-Wall -O2
 LDLIBS+=-pthread
-LDLIBS+=-lws2_32 # for mingw
+#LDLIBS+=-lws2_32 # for mingw
 
 all: $(TARGET)
 

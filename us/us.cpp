@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 	int res;
 #ifdef __linux__
 	int optval = 1;
-	int res = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	res = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 	if (res == -1) {
 		perror("setsockopt");
 		return -1;

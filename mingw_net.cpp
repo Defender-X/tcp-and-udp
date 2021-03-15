@@ -1,4 +1,7 @@
 #include "mingw_net.h"
+
+#ifdef WIN32
+
 #include <stdint.h>
 #include <winsock2.h>
 
@@ -161,3 +164,5 @@ int inet_pton(int af, const char *src, void *dst)
 		return -1;
 	}
 }
+
+#endif // WIN32
