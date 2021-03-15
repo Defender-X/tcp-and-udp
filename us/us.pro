@@ -5,3 +5,8 @@ CONFIG -= qt
 LIBS += -pthread
 DESTDIR = $${PWD}/../bin
 SOURCES += us.cpp
+win32 {
+    SOURCES += ../mingw_net.cpp
+    HEADERS += ../mingw_net.h
+    LIBS += -lws2_32
+}

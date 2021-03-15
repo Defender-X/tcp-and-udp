@@ -1,7 +1,13 @@
 #include <string.h>
 #include <unistd.h>
+#ifdef __linux__
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#endif // __linux
+#ifdef WIN32
+#include <winsock2.h>
+#include "../mingw_net.h"
+#endif // WIN32
 #include <iostream>
 #include <thread>
 
@@ -69,12 +75,15 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
+	int res;
+#ifdef __linux__
 	int optval = 1;
 	int res = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 	if (res == -1) {
 		perror("setsockopt");
 		return -1;
 	}
+#endif // __linux__
 
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;

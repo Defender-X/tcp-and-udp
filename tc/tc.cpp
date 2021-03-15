@@ -1,7 +1,13 @@
 #include <string.h>
 #include <unistd.h>
+#ifdef __linux__
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#endif // __linux
+#ifdef WIN32
+#include <winsock2.h>
+#include "../mingw_net.h"
+#endif // WIN32
 #include <iostream>
 #include <thread>
 
@@ -13,7 +19,7 @@ void usage() {
 }
 
 struct Param {
-	struct in_addr ip{0};
+	struct in_addr ip;
 	uint16_t port{0};
 
 	bool parse(int argc, char* argv[]) {
