@@ -13,6 +13,10 @@
 
 using namespace std;
 
+#ifdef WIN32
+void perror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
+#endif // WIN32
+
 void usage() {
 	cout << "syntax: tc <ip> <port>\n";
 	cout << "sample: tc 127.0.0.1 1234\n";
@@ -61,6 +65,11 @@ int main(int argc, char* argv[]) {
 		usage();
 		return -1;
 	}
+
+#ifdef WIN32
+	WSAData wsaData;
+	WSAStartup(0x0202, &wsaData);
+#endif // WIN32
 
 	int sd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sd == -1) {
