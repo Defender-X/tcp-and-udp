@@ -78,6 +78,13 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
+	int optval = 1;
+	int res = setsockopt(sd, SOL_SOCKET, SO_BROADCAST, &optval, sizeof(optval));
+	if (res == -1) {
+		perror("setsockopt");
+		return -1;
+	}
+
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(param.port);
