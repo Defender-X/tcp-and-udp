@@ -90,8 +90,7 @@ int main(int argc, char* argv[]) {
 	addr.sin_addr = param.ip;
 	memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
 
-	std::thread t(recvThread, sd);
-	t.detach();
+	std::thread* t = nullptr;
 
 	while (true) {
 		static const int BUFSIZE = 65536;
@@ -103,6 +102,10 @@ int main(int argc, char* argv[]) {
 			fprintf(stderr, "sendto return %ld", res);
 			perror(" ");
 			break;
+		}
+		if (t == nullptr) {
+			t = new std::thread(recvThread, sd);
+			t->detach();
 		}
 	}
 	::close(sd);
