@@ -21,13 +21,13 @@ clean:
 	cd us; make clean; cd ..
 
 install:
-	sudo cp bin/tc /usr/sbin
-	sudo cp bin/ts /usr/sbin
-	sudo cp bin/uc /usr/sbin
-	sudo cp bin/us /usr/sbin
+	sudo cp bin/tc /usr/local/sbin
+	sudo cp bin/ts /usr/local/sbin
+	sudo cp bin/uc /usr/local/sbin
+	sudo cp bin/us /usr/local/sbin
 
 uninstall:
-	sudo rm /usr/sbin/tc /usr/sbin/ts /usr/sbin/uc /usr/sbin/us
+	sudo rm /usr/local/sbin/tc /usr/local/sbin/ts /usr/local/sbin/uc /usr/local/sbin/us
 
 android-install:
 	adb push bin/tc bin/ts bin/uc bin/us /data/local/tmp
