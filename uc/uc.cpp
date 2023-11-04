@@ -13,8 +13,10 @@
 #include <thread>
 
 #ifdef WIN32
-void perror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
-#endif // WIN32
+void myerror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
+#else
+void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errno), errno); }
+#endif
 
 void usage() {
 	printf("syntax: uc <ip> <port>\n");
@@ -31,7 +33,7 @@ struct Param {
 			switch (res) {
 				case 1: break;
 				case 0: fprintf(stderr, "not a valid network address\n"); return false;
-				case -1: perror("inet_pton"); return false;
+				case -1: myerror("inet_pton"); return false;
 			}
 			port = atoi(argv[i++]);
 		}
@@ -49,7 +51,7 @@ void recvThread(int sd) {
 		ssize_t res = ::recvfrom(sd, buf, BUFSIZE - 1, 0, (struct sockaddr*)&addr, &len);
 		if (res == 0 || res == -1) {
 			fprintf(stderr, "recvfrom return %ld", res);
-			perror(" ");
+			myerror(" ");
 			break;
 		}
 		buf[res] = '\0';
@@ -73,14 +75,14 @@ int main(int argc, char* argv[]) {
 
 	int sd = ::socket(AF_INET, SOCK_DGRAM, 0);
 	if (sd == -1) {
-		perror("socket");
+		myerror("socket");
 		return -1;
 	}
 
 	int optval = 1;
 	int res = ::setsockopt(sd, SOL_SOCKET, SO_BROADCAST, (char*)&optval, sizeof(optval));
 	if (res == -1) {
-		perror("setsockopt");
+		myerror("setsockopt");
 		return -1;
 	}
 
@@ -100,7 +102,7 @@ int main(int argc, char* argv[]) {
 		ssize_t res = ::sendto(sd, buf, strlen(buf), 0, (struct sockaddr*)&addr, sizeof(addr));
 		if (res == 0 || res == -1) {
 			fprintf(stderr, "sendto return %ld", res);
-			perror(" ");
+			myerror(" ");
 			break;
 		}
 		if (t == nullptr) {

@@ -13,8 +13,10 @@
 #include <thread>
 
 #ifdef WIN32
-void perror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
-#endif // WIN32
+void myerror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
+#else
+void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errno), errno); }
+#endif
 
 void usage() {
 	printf("syntax: ts [-e] <port>\n");
@@ -46,7 +48,7 @@ void recvThread(int sd) {
 		ssize_t res = ::recv(sd, buf, BUFSIZE - 1, 0);
 		if (res == 0 || res == -1) {
 			fprintf(stderr, "recv return %ld", res);
-			perror(" ");
+			myerror(" ");
 			break;
 		}
 		buf[res] = '\0';
@@ -56,7 +58,7 @@ void recvThread(int sd) {
 			res = ::send(sd, buf, res, 0);
 			if (res == 0 || res == -1) {
 				fprintf(stderr, "send return %ld", res);
-				perror(" ");
+				myerror(" ");
 				break;
 			}
 		}
@@ -78,7 +80,7 @@ int main(int argc, char* argv[]) {
 
 	int sd = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (sd == -1) {
-		perror("socket");
+		myerror("socket");
 		return -1;
 	}
 
@@ -87,7 +89,7 @@ int main(int argc, char* argv[]) {
 	int optval = 1;
 	res = ::setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 	if (res == -1) {
-		perror("setsockopt");
+		myerror("setsockopt");
 		return -1;
 	}
 #endif // __linux
@@ -99,13 +101,13 @@ int main(int argc, char* argv[]) {
 
 	ssize_t res2 = ::bind(sd, (struct sockaddr *)&addr, sizeof(addr));
 	if (res2 == -1) {
-		perror("bind");
+		myerror("bind");
 		return -1;
 	}
 
 	res = listen(sd, 5);
 	if (res == -1) {
-		perror("listen");
+		myerror("listen");
 		return -1;
 	}
 
@@ -114,7 +116,7 @@ int main(int argc, char* argv[]) {
 		socklen_t len = sizeof(cli_addr);
 		int cli_sd = ::accept(sd, (struct sockaddr *)&cli_addr, &len);
 		if (cli_sd == -1) {
-			perror("accept");
+			myerror("accept");
 			break;
 		}
 		std::thread* t = new std::thread(recvThread, cli_sd);
