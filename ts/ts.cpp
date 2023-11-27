@@ -19,7 +19,7 @@ void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errn
 #endif
 
 void usage() {
-	printf("syntax: ts [-e] <port>\n");
+	printf("syntax: ts [-e] <port> [-li <local ip>]\n");
 	printf("  -e : echo\n");
 	printf("sample: ts 1234\n");
 }
@@ -27,14 +27,28 @@ void usage() {
 struct Param {
 	bool echo{false};
 	uint16_t port{0};
+	uint32_t localIp{0};
 
 	bool parse(int argc, char* argv[]) {
-		for (int i = 1; i < argc; i++) {
+		for (int i = 1; i < argc;) {
 			if (strcmp(argv[i], "-e") == 0) {
 				echo = true;
+				i++;
 				continue;
 			}
-			port = atoi(argv[i++]);
+
+			if (strcmp(argv[i], "-li") == 0) {
+				int res = inet_pton(AF_INET, argv[i + 1], &localIp);
+				switch (res) {
+					case 1: break;
+					case 0: fprintf(stderr, "not a valid network address\n"); return false;
+					case -1: myerror("inet_pton"); return false;
+				}
+				i += 2;
+				continue;
+			}
+
+			if (i < argc) port = atoi(argv[i++]);
 		}
 		return port != 0;
 	}
@@ -42,6 +56,7 @@ struct Param {
 
 void recvThread(int sd) {
 	printf("connected\n");
+	fflush(stdout);
 	static const int BUFSIZE = 65536;
 	char buf[BUFSIZE];
 	while (true) {
@@ -64,6 +79,7 @@ void recvThread(int sd) {
 		}
 	}
 	printf("disconnected\n");
+	fflush(stdout);
 	::close(sd);
 }
 
@@ -78,48 +94,65 @@ int main(int argc, char* argv[]) {
 	WSAStartup(0x0202, &wsaData);
 #endif // WIN32
 
+	//
+	// socket
+	//
 	int sd = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (sd == -1) {
 		myerror("socket");
 		return -1;
 	}
 
-	int res;
 #ifdef __linux__
-	int optval = 1;
-	res = ::setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
-	if (res == -1) {
-		myerror("setsockopt");
-		return -1;
+	//
+	// setsockopt
+	//
+	{
+		int optval = 1;
+		int res = ::setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+		if (res == -1) {
+			myerror("setsockopt");
+			return -1;
+		}
 	}
 #endif // __linux
 
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_port = htons(param.port);
+	//
+	// bind
+	//
+	{
+		struct sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		addr.sin_addr.s_addr = param.localIp;
+		addr.sin_port = htons(param.port);
 
-	ssize_t res2 = ::bind(sd, (struct sockaddr *)&addr, sizeof(addr));
-	if (res2 == -1) {
-		myerror("bind");
-		return -1;
+		ssize_t res = ::bind(sd, (struct sockaddr *)&addr, sizeof(addr));
+		if (res == -1) {
+			myerror("bind");
+			return -1;
+		}
 	}
 
-	res = listen(sd, 5);
-	if (res == -1) {
-		myerror("listen");
-		return -1;
+	//
+	// listen
+	//
+	{
+		int res = listen(sd, 5);
+		if (res == -1) {
+			myerror("listen");
+			return -1;
+		}
 	}
 
 	while (true) {
-		struct sockaddr_in cli_addr;
-		socklen_t len = sizeof(cli_addr);
-		int cli_sd = ::accept(sd, (struct sockaddr *)&cli_addr, &len);
-		if (cli_sd == -1) {
+		struct sockaddr_in addr;
+		socklen_t len = sizeof(addr);
+		int newsd = ::accept(sd, (struct sockaddr *)&addr, &len);
+		if (newsd == -1) {
 			myerror("accept");
 			break;
 		}
-		std::thread* t = new std::thread(recvThread, cli_sd);
+		std::thread* t = new std::thread(recvThread, newsd);
 		t->detach();
 	}
 	::close(sd);
