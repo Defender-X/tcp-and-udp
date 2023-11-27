@@ -19,7 +19,7 @@ void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errn
 #endif
 
 void usage() {
-	printf("syntax: ts [-e] <port> [-li <local ip>]\n");
+	printf("syntax: ts <port> [-e] [-li <local ip>]\n");
 	printf("  -e : echo\n");
 	printf("sample: ts 1234\n");
 }
