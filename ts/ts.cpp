@@ -19,7 +19,7 @@ void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errn
 #endif
 
 void usage() {
-	printf("syntax: ts <port> [-e] [-li <local ip>]\n");
+	printf("syntax: ts <port> [-e] [-si <src ip>]\n");
 	printf("  -e : echo\n");
 	printf("sample: ts 1234\n");
 }
@@ -27,7 +27,7 @@ void usage() {
 struct Param {
 	bool echo{false};
 	uint16_t port{0};
-	uint32_t localIp{0};
+	uint32_t srcIp{0};
 
 	bool parse(int argc, char* argv[]) {
 		for (int i = 1; i < argc;) {
@@ -37,8 +37,8 @@ struct Param {
 				continue;
 			}
 
-			if (strcmp(argv[i], "-li") == 0) {
-				int res = inet_pton(AF_INET, argv[i + 1], &localIp);
+			if (strcmp(argv[i], "-si") == 0) {
+				int res = inet_pton(AF_INET, argv[i + 1], &srcIp);
 				switch (res) {
 					case 1: break;
 					case 0: fprintf(stderr, "not a valid network address\n"); return false;
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 	{
 		struct sockaddr_in addr;
 		addr.sin_family = AF_INET;
-		addr.sin_addr.s_addr = param.localIp;
+		addr.sin_addr.s_addr = param.srcIp;
 		addr.sin_port = htons(param.port);
 
 		ssize_t res = ::bind(sd, (struct sockaddr *)&addr, sizeof(addr));
