@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -10,6 +10,7 @@
 #include <winsock2.h>
 #include "../mingw_net.h"
 #endif // WIN32
+#include <iostream>
 #include <thread>
 
 #ifdef WIN32
@@ -24,8 +25,8 @@ void usage() {
 }
 
 struct Param {
-	uint32_t ip{0};
-	uint16_t port{0};
+	char* ip{nullptr};
+	char* port{nullptr};
 	uint32_t srcIp{0};
 	uint16_t srcPort{0};
 
@@ -48,16 +49,10 @@ struct Param {
 				continue;
 			}
 
-			int res = inet_pton(AF_INET, argv[i++], &ip);
-			switch (res) {
-				case 1: break;
-				case 0: fprintf(stderr, "not a valid network address\n"); return false;
-				case -1: myerror("inet_pton"); return false;
-			}
-
-			if (i < argc) port = atoi(argv[i++]);
+			ip = argv[i++];
+			if (i < argc) port =argv[i++];
 		}
-		return (ip != 0) && (port != 0);
+		return (ip != nullptr) && (port != nullptr);
 	}
 } param;
 
@@ -94,11 +89,31 @@ int main(int argc, char* argv[]) {
 #endif // WIN32
 
 	//
+	// getaddrinfo
+	//
+	struct addrinfo aiInput, *aiOutput, *ai;
+	memset(&aiInput, 0, sizeof(aiInput));
+	aiInput.ai_family = AF_INET;
+	aiInput.ai_socktype = SOCK_DGRAM;
+	aiInput.ai_flags = 0;
+	aiInput.ai_protocol = 0;
+
+	int res = getaddrinfo(param.ip, param.port, &aiInput, &aiOutput);
+	if (res != 0) {
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(res));
+		return -1;
+	}
+
+	//
 	// socket
 	//
-	int sd = ::socket(AF_INET, SOCK_DGRAM, 0);
-	if (sd == -1) {
-		myerror("socket");
+	int sd;
+	for (ai = aiOutput; ai != nullptr; ai = ai->ai_next) {
+		sd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+		if (sd != -1) break;
+	}
+	if (ai == nullptr) {
+		fprintf(stderr, "cann not find socket for %s\n", param.ip);
 		return -1;
 	}
 
@@ -130,20 +145,13 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(param.port);
-	addr.sin_addr.s_addr = param.ip;
-	memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
-
 	std::thread* t = nullptr;
 
 	while (true) {
-		static const int BUFSIZE = 65536;
-		char buf[BUFSIZE];
-		scanf("%s", buf);
-		strcat(buf, "\r\n");
-		ssize_t res = ::sendto(sd, buf, strlen(buf), 0, (struct sockaddr*)&addr, sizeof(addr));
+		std::string s;
+		std::getline(std::cin, s);
+		s += "\r\n";
+		ssize_t res = ::sendto(sd, s.data(), s.size(), 0, ai->ai_addr, ai->ai_addrlen);
 		if (res == 0 || res == -1) {
 			fprintf(stderr, "sendto return %ld", res);
 			myerror(" ");
