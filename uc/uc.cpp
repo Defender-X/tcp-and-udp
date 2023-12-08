@@ -1,13 +1,13 @@
-#include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #ifdef __linux__
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #endif // __linux
 #ifdef WIN32
-#include <winsock2.h>
+#include <ws2tcpip.h>
 #include "../mingw_net.h"
 #endif // WIN32
 #include <iostream>
