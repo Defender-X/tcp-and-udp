@@ -13,12 +13,6 @@
 #include <iostream>
 #include <thread>
 
-const char* version() {
-	return
-#include "../version.txt"
-	" Build(" __DATE__ " " __TIME__ ")";
-}
-
 #ifdef WIN32
 void myerror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
 #else
@@ -26,7 +20,9 @@ void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errn
 #endif
 
 void usage() {
-	printf("udp client %s\n", version());
+	printf("udp client %s\n",
+#include "../version.txt"
+	);
 	printf("syntax: uc <ip> <port> [-si <src ip>] [-sp <src port>]\n");
 	printf("sample: uc 127.0.0.1 1234\n");
 }

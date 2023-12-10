@@ -12,12 +12,6 @@
 #endif // WIN32
 #include <thread>
 
-const char* version() {
-	return
-#include "../version.txt"
-	" Build(" __DATE__ " " __TIME__ ")";
-}
-
 #ifdef WIN32
 void myerror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
 #else
@@ -25,7 +19,9 @@ void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errn
 #endif
 
 void usage() {
-	printf("tcp server %s\n", version());
+	printf("tcp server %s\n",
+#include "../version.txt"
+   );
 	printf("syntax: ts <port> [-e] [-si <src ip>]\n");
 	printf("  -e : echo\n");
 	printf("sample: ts 1234\n");
