@@ -31,6 +31,7 @@ uninstall:
 
 android-install:
 	adb push bin/tc bin/ts bin/uc bin/us /data/local/tmp
+	adb exec-out "su -c '/data/data/com.termux/files/usr/bin/termux-elf-cleaner /data/local/tmp/tc /data/local/tmp/ts /data/local/tmp/uc /data/local/tmp/us'"
 	adb exec-out "su -c 'mount -o rw,remount /system'"
 	adb exec-out "su -c 'cp /data/local/tmp/tc /data/local/tmp/ts /data/local/tmp/uc /data/local/tmp/us /system/xbin'"
 	adb exec-out "su -c 'chmod 755 /system/xbin/tc'"
