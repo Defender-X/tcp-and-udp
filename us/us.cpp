@@ -22,6 +22,7 @@ void usage() {
 	printf("udp server %s\n",
 #include "../version.txt"
 	);
+	printf("\n");
 	printf("syntax: us <port> [-e] [-si <src ip>]\n");
 	printf("  -e : echo\n");
 	printf("sample: us 1234\n");

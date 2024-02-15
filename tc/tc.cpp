@@ -23,6 +23,7 @@ void usage() {
 	printf("tcp client %s\n",
 #include "../version.txt"
 	);
+	printf("\n");
 	printf("syntax: tc <ip> <port> [-si <src ip>] [-sp <src port>]\n");
 	printf("sample: tc 127.0.0.1 1234\n");
 }

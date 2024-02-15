@@ -22,6 +22,7 @@ void usage() {
 	printf("tcp server %s\n",
 #include "../version.txt"
    );
+	printf("\n");
 	printf("syntax: ts <port> [-e] [-si <src ip>]\n");
 	printf("  -e : echo\n");
 	printf("sample: ts 1234\n");
