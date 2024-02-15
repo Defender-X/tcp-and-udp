@@ -9,4 +9,4 @@ $(TARGET): tc.o ../mingw_net.o
 	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:
-	rm -f $(TARGET) *.o
+	rm -f $(TARGET) *.o ../mingw_net.o
