@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 
 	int res = getaddrinfo(param.ip, param.port, &aiInput, &aiOutput);
 	if (res != 0) {
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(res));
+		fprintf(stderr, "getaddrinfo: %S\n", gai_strerror(res));
 		return -1;
 	}
 
