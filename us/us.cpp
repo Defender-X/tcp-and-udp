@@ -13,7 +13,7 @@
 #include <thread>
 
 #ifdef WIN32
-void myerror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
+void myerror(const char* msg) { fprintf(stderr, "%s %lu\n", msg, GetLastError()); }
 #else
 void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errno), errno); }
 #endif
@@ -67,7 +67,7 @@ void recvThread(int sd) {
 		memset(&addr, 0, sizeof(addr));
 		ssize_t res = ::recvfrom(sd, buf, BUFSIZE - 1, 0, (struct sockaddr*)&addr, &len);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "recvfrom return %ld", res);
+			fprintf(stderr, "recvfrom return %zd", res);
 			myerror(" ");
 			break;
 		}
@@ -77,7 +77,7 @@ void recvThread(int sd) {
 		if (param.echo) {
 			res = ::sendto(sd, buf, res, 0, (struct sockaddr*)&addr, sizeof(addr));
 			if (res == 0 || res == -1) {
-				fprintf(stderr, "sendto return %ld", res);
+				fprintf(stderr, "sendto return %zd", res);
 				myerror(" ");
 				break;
 			}

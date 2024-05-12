@@ -14,7 +14,7 @@
 #include <thread>
 
 #ifdef WIN32
-void myerror(const char* msg) { fprintf(stderr, "%s %ld\n", msg, GetLastError()); }
+void myerror(const char* msg) { fprintf(stderr, "%s %lu\n", msg, GetLastError()); }
 #else
 void myerror(const char* msg) { fprintf(stderr, "%s %s %d\n", msg, strerror(errno), errno); }
 #endif
@@ -68,7 +68,7 @@ void recvThread(int sd) {
 	while (true) {
 		ssize_t res = ::recv(sd, buf, BUFSIZE - 1, 0);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "recv return %ld", res);
+			fprintf(stderr, "recv return %zd", res);
 			myerror(" ");
 			break;
 		}
@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
 		s += "\r\n";
 		ssize_t res = ::send(sd, s.data(), s.size(), 0);
 		if (res == 0 || res == -1) {
-			fprintf(stderr, "send return %ld", res);
+			fprintf(stderr, "send return %zd", res);
 			myerror(" ");
 			break;
 		}
